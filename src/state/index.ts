@@ -21,7 +21,7 @@ export class RootState {
   }
 
   @observable
-  public searchInputValue = "df";
+  public searchInputValue = "";
 
   @observable
   public isLoadingShown = false;

@@ -5,6 +5,7 @@ import * as initDebug from "debug";
 
 import styled from "styled-components";
 import { Maps } from "../../../../api/geo/engine/google/loader";
+import { Provider } from "./proveder";
 
 const debug = initDebug("app:map");
 
@@ -13,16 +14,28 @@ const MapRoot = styled.div`
   height: 100%;
 `;
 
-export class GoogleMaps extends React.Component<IMapProps> {
+interface IGoogleMapsState {
+  google: any;
+  map: any | null;
+}
+
+export class GoogleMaps extends React.Component<IMapProps, IGoogleMapsState> {
+  public state = {
+    google: null,
+    map: null
+  };
   private rootRef = React.createRef();
 
-  private map: any;
   public componentDidMount() {
     this.loadMap();
   }
 
   public render() {
-    return <MapRoot ref={this.rootRef as any}>asf</MapRoot>;
+    return (
+      <MapRoot ref={this.rootRef as any}>
+        <Provider value={this.state}>{this.props.children}</Provider>
+      </MapRoot>
+    );
   }
 
   private async loadMap() {
@@ -33,20 +46,15 @@ export class GoogleMaps extends React.Component<IMapProps> {
 
     const uluru = { lat: -25.344, lng: 131.036 };
 
-    this.map = new maps.Map(node, {
+    const map = new maps.Map(node, {
       center: uluru,
       zoom: 8
     });
 
-    this.map.addListener("click", this.onClick);
+    this.setState({ map, google: maps });
+    map.addListener("click", this.onClick);
 
-    debug("map initialited", this.map);
-
-    const marker = new maps.Marker({
-      map: this.map,
-      position: uluru
-    });
-    debug("marker", marker);
+    debug("map initialited", map);
   }
 
   private onClick = (e: any) => {
