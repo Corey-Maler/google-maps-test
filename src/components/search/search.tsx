@@ -12,6 +12,8 @@ import Typography from "@material-ui/core/Typography";
 import { RootState } from "../../state";
 import { Address } from "../address";
 
+import TextField from "@material-ui/core/TextField";
+
 const PaperStyled = styled(Paper)`
   width: 100%;
   padding: 20px;
@@ -76,7 +78,11 @@ export class Search extends React.Component<ISearchProps> {
         {results &&
           results.length > 0 && (
             <Footer>
-              <InputBaseStyled {...store.nameInputVm.model} />
+              <TextField
+                variant="outlined"
+                style={{ display: "flex", marginBottom: 10 }}
+                {...store.nameInputVm.model}
+              />
               <ButtonS color="primary" onClick={store.save}>
                 Save
               </ButtonS>

@@ -14,7 +14,7 @@ export class InputVM {
 
   @computed
   public get valid() {
-    return this.value.length > 0;
+    return this.value.length > 0 && this.value.length < 100;
   }
 
   @action
@@ -25,6 +25,8 @@ export class InputVM {
   @computed
   public get model() {
     return {
+      error: !this.valid,
+      label: this.valid ? undefined : "Too short",
       onChange: this.onChange,
       // tslint:disable-next-line:no-console
       placeholder: this.placeholder,
