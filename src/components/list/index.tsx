@@ -30,10 +30,15 @@ const NoResults = () => (
 export class List extends React.Component<IListProps> {
   public render() {
     const list = this.props.store!.list;
+    const selectFavourite = this.props.store!.selectFavourite;
     return (
       <PaperStyled>
-        {list.map((item, i) => (
-          <Address key={i} streetName={item.streetName} pos={item.pos} />
+        {list.map(item => (
+          <Address
+            key={item.placeId}
+            restarant={item}
+            onSelect={selectFavourite}
+          />
         ))}
 
         {list.length === 0 && <NoResults />}

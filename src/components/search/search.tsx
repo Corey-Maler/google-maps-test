@@ -27,10 +27,6 @@ const InputBaseStyled = styled(InputBase)`
   border-radius: 3px;
 `;
 
-const ButtonS = styled(Button)`
-  margin-right: 20px !important;
-`;
-
 const Footer = styled.div`
   margin-top: 12px;
 `;
@@ -44,7 +40,7 @@ interface ISearchProps {
 export class Search extends React.Component<ISearchProps> {
   public render() {
     const store = this.props.store as RootState; // Typescript Inject bug
-    const result = store.result;
+    const results = store.results;
     return (
       <PaperStyled>
         <Typography variant="h6" component="h3">
@@ -59,13 +55,13 @@ export class Search extends React.Component<ISearchProps> {
 
         {store.isLoadingShown && <LinearProgress />}
 
-        {result && <Address streetName={result.streetName} pos={result.pos} />}
+        {results &&
+          results.map(res => (
+            <Address key={res.placeId} restarant={res} onSelect={store.add} />
+          ))}
 
-        {result && (
+        {results && (
           <Footer>
-            <ButtonS variant="outlined" color="primary" onClick={store.add}>
-              Save
-            </ButtonS>
             <Button color="default" onClick={store.clear}>
               Clear
             </Button>

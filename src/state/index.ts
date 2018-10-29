@@ -6,7 +6,6 @@ import * as debounce from "debounce";
 import * as initDebug from "debug";
 
 import * as API from "../api";
-import { IPoint } from "../models/point";
 
 const debug = initDebug("app:store");
 
@@ -17,8 +16,8 @@ export class RootState {
   }
 
   @computed
-  public get result(): IReustarent | null {
-    return this.searchResult;
+  public get results(): IReustarent[] | null {
+    return this.searchResults;
   }
 
   @observable
@@ -28,7 +27,7 @@ export class RootState {
   public isLoadingShown = false;
 
   @observable
-  private searchResult: IReustarent | null = null;
+  private searchResults: IReustarent[] | null = null;
 
   @observable
   private listInternal: IReustarent[] = [];
@@ -43,17 +42,17 @@ export class RootState {
   }
 
   @action
-  public add = () => {
-    if (this.result) {
-      this.listInternal.push(this.result);
+  public add = (e: IReustarent) => {
+    if (this.results) {
+      this.listInternal.push(e);
     }
-    this.searchResult = null;
+    this.searchResults = null;
     this.searchInputValue = "";
   };
 
   @action
   public clear = () => {
-    this.searchResult = null;
+    this.searchResults = null;
     this.searchInputValue = "";
   };
 
@@ -64,15 +63,17 @@ export class RootState {
     debug(value);
     this.search(value);
     this.isLoadingShown = true;
-    this.searchResult = null;
+    this.searchResults = null;
   };
 
   @action
-  private onResult = (res: IPoint) => {
+  public selectFavourite = (e: IReustarent) => {
+    debug("select", e);
+  };
+
+  @action
+  private onResult = (res: IReustarent[]) => {
     this.isLoadingShown = false;
-    this.searchResult = {
-      pos: res,
-      streetName: "sadsf"
-    };
+    this.searchResults = res;
   };
 }
