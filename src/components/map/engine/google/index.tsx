@@ -4,8 +4,7 @@ import { IMapProps } from "../../interface";
 import * as initDebug from "debug";
 
 import styled from "styled-components";
-
-import * as config from "./config.json";
+import { Maps } from "../../../../api/geo/engine/google/loader";
 
 const debug = initDebug("app:map");
 
@@ -26,37 +25,15 @@ export class GoogleMaps extends React.Component<IMapProps> {
     return <MapRoot ref={this.rootRef as any}>asf</MapRoot>;
   }
 
-  private loadMap() {
-    debug("map loaded", config);
-    const callback = "initMap";
-    (window as any)[callback] = this.onMapLoaded;
+  private async loadMap() {
+    const maps = await Maps();
 
-    const script = document.createElement("script");
-    script.async = true;
-    script.defer = true;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${
-      config["api-key"]
-    }&callback=${callback}`;
-
-    const head = document.head;
-    if (head) {
-      head.appendChild(script);
-    }
-
-    /*
-    <script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
-    </script>
-    */
-  }
-
-  private onMapLoaded = () => {
     debug("map loaded", this.rootRef);
     const node = this.rootRef.current;
 
     const uluru = { lat: -25.344, lng: 131.036 };
 
-    this.map = new (window as any).google.maps.Map(node, {
+    this.map = new maps.Map(node, {
       center: uluru,
       zoom: 8
     });
@@ -65,12 +42,12 @@ export class GoogleMaps extends React.Component<IMapProps> {
 
     debug("map initialited", this.map);
 
-    const marker = new (window as any).google.maps.Marker({
+    const marker = new maps.Marker({
       map: this.map,
       position: uluru
     });
     debug("marker", marker);
-  };
+  }
 
   private onClick = (e: any) => {
     debug("on map click", e);
