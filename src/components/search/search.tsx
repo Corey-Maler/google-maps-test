@@ -31,6 +31,10 @@ const Footer = styled.div`
   margin-top: 12px;
 `;
 
+const ButtonS = styled(Button)`
+  margin-right: 12px !important;
+`;
+
 interface ISearchProps {
   store?: RootState;
 }
@@ -61,12 +65,21 @@ export class Search extends React.Component<ISearchProps> {
           results
             .slice(0, 6)
             .map(res => (
-              <Address key={res.placeId} restarant={res} onSelect={store.add} />
+              <Address
+                selected={res === store.searchSelectedResult}
+                key={res.placeId}
+                restarant={res}
+                onSelect={store.selectResult}
+              />
             ))}
 
         {results &&
           results.length > 0 && (
             <Footer>
+              <InputBaseStyled {...store.nameInputVm.model} />
+              <ButtonS color="primary" onClick={store.save}>
+                Save
+              </ButtonS>
               <Button color="default" onClick={store.clear}>
                 Clear
               </Button>

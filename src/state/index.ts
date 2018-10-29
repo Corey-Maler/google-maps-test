@@ -1,5 +1,5 @@
 import { action, computed, observable } from "mobx";
-import { IReustarent } from "src/models";
+import { IReustarent, ISearchResult } from "src/models";
 
 import * as debounce from "debounce";
 
@@ -7,6 +7,7 @@ import * as initDebug from "debug";
 
 import * as API from "../api";
 import { IPoint } from "../models/point";
+import { InputVM } from "./input-vm";
 
 const debug = initDebug("app:store");
 
@@ -17,7 +18,7 @@ export class RootState {
   }
 
   @computed
-  public get results(): IReustarent[] | null {
+  public get results(): ISearchResult[] | null {
     return this.searchResults;
   }
 
@@ -30,6 +31,8 @@ export class RootState {
     return undefined;
   }
 
+  public readonly nameInputVm = new InputVM("Reustarant name");
+
   @observable
   public searchInputValue = "";
 
@@ -37,7 +40,10 @@ export class RootState {
   public isLoadingShown = false;
 
   @observable
-  private searchResults: IReustarent[] | null = null;
+  public searchSelectedResult: ISearchResult | undefined = undefined;
+
+  @observable
+  private searchResults: ISearchResult[] | null = null;
 
   @observable
   private listInternal: IReustarent[] = [];
@@ -55,18 +61,17 @@ export class RootState {
   }
 
   @action
-  public add = (e: IReustarent) => {
-    if (this.results) {
-      this.listInternal.push(e);
-    }
-    this.searchResults = null;
-    this.searchInputValue = "";
+  public selectResult = (e: ISearchResult) => {
+    this.searchSelectedResult = e;
   };
 
   @action
   public clear = () => {
     this.searchResults = null;
     this.searchInputValue = "";
+    this.searchSelectedResult = undefined;
+
+    this.nameInputVm.reset();
   };
 
   @action
@@ -94,6 +99,18 @@ export class RootState {
   public selectFavourite = (e: IReustarent) => {
     debug("select", e);
     this.selected = e;
+  };
+
+  @action
+  public save = () => {
+    if (this.nameInputVm.valid && this.searchSelectedResult) {
+      this.listInternal.push({
+        title: this.nameInputVm.value,
+        ...this.searchSelectedResult
+      });
+
+      this.clear();
+    }
   };
 
   @action

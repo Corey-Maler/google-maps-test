@@ -5,21 +5,31 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
 import ImageIcon from "@material-ui/icons/Image";
-import { IReustarent } from "src/models";
+import { IReustarent, ISearchResult, isReustarant } from "src/models";
 interface IAddressProps {
-  onSelect: (r: IReustarent) => void;
-  restarant: IReustarent;
+  onSelect: (r: IReustarent | ISearchResult) => void;
+  restarant: IReustarent | ISearchResult;
+  selected?: boolean;
 }
 
-export const Address = ({ onSelect, restarant }: IAddressProps) => (
+export const Address = ({ onSelect, selected, restarant }: IAddressProps) => (
   // tslint:disable-next-line:jsx-no-lambda
-  <ListItem onClick={_ => onSelect(restarant)} button={true}>
+  <ListItem
+    selected={selected}
+    // tslint:disable-next-line:jsx-no-lambda
+    onClick={_ => onSelect(restarant)}
+    button={true}
+  >
     <Avatar>
       <ImageIcon />
     </Avatar>
     <ListItemText
-      primary={restarant.streetName}
-      secondary={`${restarant.pos.lat}, ${restarant.pos.lng}`}
+      primary={isReustarant(restarant) ? restarant.title : restarant.streetName}
+      secondary={
+        isReustarant(restarant)
+          ? restarant.streetName
+          : `${restarant.pos.lat}, ${restarant.pos.lng}`
+      }
     />
   </ListItem>
 );
