@@ -35,6 +35,8 @@ interface ISearchProps {
   store?: RootState;
 }
 
+const NoResults = () => <div style={{ color: "#666" }}>No results</div>;
+
 @inject("store")
 @observer
 export class Search extends React.Component<ISearchProps> {
@@ -56,17 +58,22 @@ export class Search extends React.Component<ISearchProps> {
         {store.isLoadingShown && <LinearProgress />}
 
         {results &&
-          results.map(res => (
-            <Address key={res.placeId} restarant={res} onSelect={store.add} />
-          ))}
+          results
+            .slice(0, 6)
+            .map(res => (
+              <Address key={res.placeId} restarant={res} onSelect={store.add} />
+            ))}
 
-        {results && (
-          <Footer>
-            <Button color="default" onClick={store.clear}>
-              Clear
-            </Button>
-          </Footer>
-        )}
+        {results &&
+          results.length > 0 && (
+            <Footer>
+              <Button color="default" onClick={store.clear}>
+                Clear
+              </Button>
+            </Footer>
+          )}
+
+        {results && results.length === 0 && <NoResults />}
       </PaperStyled>
     );
   }

@@ -6,6 +6,7 @@ import * as debounce from "debounce";
 import * as initDebug from "debug";
 
 import * as API from "../api";
+import { IPoint } from "../models/point";
 
 const debug = initDebug("app:store");
 
@@ -20,6 +21,15 @@ export class RootState {
     return this.searchResults;
   }
 
+  @computed
+  public get selectedPoint(): IPoint | undefined {
+    if (this.selected) {
+      return this.selected.pos;
+    }
+
+    return undefined;
+  }
+
   @observable
   public searchInputValue = "";
 
@@ -31,6 +41,9 @@ export class RootState {
 
   @observable
   private listInternal: IReustarent[] = [];
+
+  @observable
+  private selected: IReustarent | undefined = undefined;
 
   private search = debounce((strName: string) => {
     debug("search debounced", strName);
@@ -67,8 +80,20 @@ export class RootState {
   };
 
   @action
+  public mapClick = async (e: any) => {
+    const v = e.latLng;
+    debug("map click", v);
+    this.isLoadingShown = true;
+    this.searchResults = null;
+    const res = await API.geo.point2str(v);
+    this.isLoadingShown = false;
+    this.searchResults = res;
+  };
+
+  @action
   public selectFavourite = (e: IReustarent) => {
     debug("select", e);
+    this.selected = e;
   };
 
   @action

@@ -30,6 +30,13 @@ export class GoogleMaps extends React.Component<IMapProps, IGoogleMapsState> {
     this.loadMap();
   }
 
+  public componentWillReceiveProps(nextProps: IMapProps) {
+    const map = this.state.map;
+    if (this.props.center !== nextProps.center && nextProps.center && map) {
+      (map as any).setCenter(nextProps.center);
+    }
+  }
+
   public render() {
     return (
       <MapRoot ref={this.rootRef as any}>
@@ -44,10 +51,8 @@ export class GoogleMaps extends React.Component<IMapProps, IGoogleMapsState> {
     debug("map loaded", this.rootRef);
     const node = this.rootRef.current;
 
-    const uluru = { lat: -25.344, lng: 131.036 };
-
     const map = new maps.Map(node, {
-      center: uluru,
+      center: { lat: 0, lng: 0 },
       zoom: 8
     });
 
@@ -58,6 +63,8 @@ export class GoogleMaps extends React.Component<IMapProps, IGoogleMapsState> {
   }
 
   private onClick = (e: any) => {
-    debug("on map click", e);
+    if (this.props.select) {
+      this.props.select(e);
+    }
   };
 }

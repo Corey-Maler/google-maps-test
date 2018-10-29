@@ -1,1 +1,1 @@
-export { str2point } from "./engine/google";
+export { str2point, point2str } from "./engine/google";

@@ -14,9 +14,10 @@ interface IMapProps {
 export class Map extends React.Component<IMapProps> {
   public render() {
     const list = this.props.store!.list;
+    const selected = this.props.store!.selectedPoint;
     return (
       <React.Fragment>
-        <GoogleMaps>
+        <GoogleMaps select={this.props.store!.mapClick} center={selected}>
           {list.map(item => (
             <Marker key={item.placeId} reustarent={item} />
           ))}
